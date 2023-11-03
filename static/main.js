@@ -1,142 +1,146 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const baseDeDatos = [
+    const productsDatabase = [
         {
             id: 1,
-            nombre: 'Regular pizza',
-            precio: 400,
-            imagen: 'https://www.lavanguardia.com/files/og_thumbnail/files/fp/uploads/2021/03/30/6063031b90a87.r_d.1083-871-0.jpeg',
+            name: 'Regular pizza',
+            price: 400,
+            image: 'https://www.lavanguardia.com/files/og_thumbnail/files/fp/uploads/2021/03/30/6063031b90a87.r_d.1083-871-0.jpeg',
         },
         {
             id: 2,
-            nombre: 'Scicialian pizza',
-            precio: 500,
-            imagen: 'https://media.gettyimages.com/id/938742222/es/foto/pizza-de-pepperoni-cheesy.jpg?s=612x612&w=gi&k=20&c=PV3H9VSGmPqj2aevNly3yHT50b0gfzLbL6IJDs6WT2c=',
+            name: 'Sicilian pizza',
+            price: 500,
+            image: 'https://media.gettyimages.com/id/938742222/es/foto/pizza-de-pepperoni-cheesy.jpg?s=612x612&w=gi&k=20&c=PV3H9VSGmPqj2aevNly3yHT50b0gfzLbL6IJDs6WT2c=',
         },
         {
             id: 3,
-            nombre: 'Sub Cheeseburger',
-            precio: 300,
-            imagen: 'https://burrataandbubbles.com/wp-content/uploads/2020/02/cheeseburger-sub-featured-image.jpg',
+            name: 'Sub Cheeseburger',
+            price: 300,
+            image: 'https://burrataandbubbles.com/wp-content/uploads/2020/02/cheeseburger-sub-featured-image.jpg',
         },
         {
             id: 4,
-            nombre: 'Greek Salad',
-            precio: 250,
-            imagen: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmBU3ESWllEpTAVgTcM37QlCurLPQsjv05Zg&usqp=CAU',
+            name: 'Greek Salad',
+            price: 250,
+            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmBU3ESWllEpTAVgTcM37QlCurLPQsjv05Zg&usqp=CAU',
         },
     ];
 
-    let carrito = [];
-    const divisa = 'C$';
-    const DOMitems = document.querySelector('#items');
-    const DOMcarrito = document.querySelector('#carrito');
-    const DOMtotal = document.querySelector('#total');
-    const DOMbotonVaciar = document.querySelector('#boton-vaciar');
-
-    function renderizarProductos() {
-        baseDeDatos.forEach((info) => {
+    let cart = [];
+    const currency = 'C$';
+    const itemsContainer = document.querySelector('#items');
+    const cartContainer = document.querySelector('#carrito');
+    const totalContainer = document.querySelector('#total');
+    const clearButton = document.querySelector('#boton-vaciar');
 
 
-            const miNodo = document.createElement('div');
-            miNodo.classList.add('card', 'col-sm-4');
 
+    function renderProducts() {
+        productsDatabase.forEach((product) => {
+            const productNode = document.createElement('div');
+            productNode.classList.add('card', 'col-sm-4');
 
-            const miNodoCardBody = document.createElement('div');
-            miNodoCardBody.classList.add('card-body');
+            const productCardBody = document.createElement('div');
+            productCardBody.classList.add('card-body');
 
+            const productTitle = document.createElement('h5');
+            productTitle.classList.add('card-title');
+            productTitle.textContent = product.name;
 
-            const miNodoTitle = document.createElement('h5');
-            miNodoTitle.classList.add('card-title');
-            miNodoTitle.textContent = info.nombre;
+            const productImage = document.createElement('img');
+            productImage.classList.add('img-fluid');
+            productImage.setAttribute('src', product.image);
 
+            const productPrice = document.createElement('p');
+            productPrice.classList.add('card-text');
+            productPrice.textContent = `${product.price}${currency}`;
 
-            const miNodoImagen = document.createElement('img');
-            miNodoImagen.classList.add('img-fluid');
-            miNodoImagen.setAttribute('src', info.imagen);
+            const addToCartButton = document.createElement('button');
+            addToCartButton.classList.add('btn', 'btn-primary');
+            addToCartButton.textContent = '+';
+            addToCartButton.setAttribute('marker', product.id);
+            addToCartButton.addEventListener('click', addToCart);
 
-
-            const miNodoPrecio = document.createElement('p');
-            miNodoPrecio.classList.add('card-text');
-            miNodoPrecio.textContent = `${info.precio}${divisa}`;
-
-
-            const miNodoBoton = document.createElement('button');
-            miNodoBoton.classList.add('btn', 'btn-primary');
-            miNodoBoton.textContent = '+';
-            miNodoBoton.setAttribute('marcador', info.id);
-            miNodoBoton.addEventListener('click', anyadirProductoAlCarrito);
-
-
-            miNodoCardBody.appendChild(miNodoImagen);
-            miNodoCardBody.appendChild(miNodoTitle);
-            miNodoCardBody.appendChild(miNodoPrecio);
-            miNodoCardBody.appendChild(miNodoBoton);
-            miNodo.appendChild(miNodoCardBody);
-            DOMitems.appendChild(miNodo);
+            productCardBody.appendChild(productImage);
+            productCardBody.appendChild(productTitle);
+            productCardBody.appendChild(productPrice);
+            productCardBody.appendChild(addToCartButton);
+            productNode.appendChild(productCardBody);
+            itemsContainer.appendChild(productNode);
         });
     }
 
-    function anyadirProductoAlCarrito(evento) {
-        carrito.push(evento.target.getAttribute('marcador'))
-        renderizarCarrito();
-
+    function addToCart(event) {
+        cart.push(event.target.getAttribute('marker'));
+        renderCart();
     }
 
-    function renderizarCarrito() {
-        DOMcarrito.textContent = '';
-        const carritoSinDuplicados = [...new Set(carrito)];
-        carritoSinDuplicados.forEach((item) => {
-            const miItem = baseDeDatos.filter((itemBaseDatos) => {
-                return itemBaseDatos.id === parseInt(item);
-            });
-            const numeroUnidadesItem = carrito.reduce((total, itemId) => {
+    function renderCart() {
+        cartContainer.textContent = '';
+        const uniqueCart = [...new Set(cart)];
+        uniqueCart.forEach((item) => {
+            const product = productsDatabase.find((product) => product.id === parseInt(item));
+            const numberOfUnits = cart.reduce((total, itemId) => {
                 return itemId === item ? total += 1 : total;
             }, 0);
 
-            const miNodo = document.createElement('li');
-            miNodo.classList.add('list-group-item', 'text-right', 'mx-2');
-            miNodo.textContent = `${numeroUnidadesItem} x ${miItem[0].nombre} - ${miItem[0].precio}${divisa}`;
-            const miBoton = document.createElement('button');
-            miBoton.classList.add('btn', 'btn-danger', 'mx-5');
-            miBoton.textContent = 'X';
-            miBoton.style.marginLeft = '1rem';
-            miBoton.dataset.item = item;
-            miBoton.addEventListener('click', borrarItemCarrito);
+            const cartNode = document.createElement('li');
+            cartNode.classList.add('list-group-item', 'text-right', 'mx-2');
+            cartNode.textContent = `${numberOfUnits} x ${product.name} - ${product.price}${currency}`;
+            const removeButton = document.createElement('button');
+            removeButton.classList.add('btn', 'btn-danger', 'mx-5');
+            removeButton.textContent = 'X';
+            removeButton.style.marginLeft = '1rem';
+            removeButton.dataset.item = item;
+            removeButton.addEventListener('click', removeCartItem);
 
-            miNodo.appendChild(miBoton);
-            DOMcarrito.appendChild(miNodo);
+            cartNode.appendChild(removeButton);
+            cartContainer.appendChild(cartNode);
         });
 
-        DOMtotal.textContent = calcularTotal();
+        totalContainer.textContent = calculateTotal();
     }
 
-
-    function borrarItemCarrito(evento) {
-        const id = evento.target.dataset.item;
-        carrito = carrito.filter((carritoId) => {
-            return carritoId !== id;
-        });
-        renderizarCarrito();
+    function removeCartItem(event) {
+        const id = event.target.dataset.item;
+        cart = cart.filter((cartItemId) => cartItemId !== id);
+        renderCart();
     }
 
-
-    function calcularTotal() {
-        return carrito.reduce((total, item) => {
-            const miItem = baseDeDatos.filter((itemBaseDatos) => {
-                return itemBaseDatos.id === parseInt(item);
-            });
-            return total + miItem[0].precio;
+    function calculateTotal() {
+        return cart.reduce((total, item) => {
+            const product = productsDatabase.find((product) => product.id === parseInt(item));
+            return total + product.price;
         }, 0).toFixed(2);
     }
 
-
-    function vaciarCarrito() {
-        carrito = [];
-        renderizarCarrito();
+    function clearCart() {
+        cart = [];
+        renderCart();
     }
 
-    DOMbotonVaciar.addEventListener('click', vaciarCarrito);
+    clearButton.addEventListener('click', clearCart);
 
-    renderizarProductos();
-    renderizarCarrito();
+    renderProducts();
+    renderCart();
+
+
+    let confirmarPedidoButton = document.getElementById("confirmarPedidoButton");
+    let pedidoForm = document.getElementById("pedidoForm");
+    
+    confirmarPedidoButton.addEventListener("click", function() {
+        Swal.fire({
+            title: '¿Desea continuar con el pedido?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí',
+            cancelButtonText: 'No'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                pedidoForm.submit();
+            }
+        });
+    });
+
 });
+
