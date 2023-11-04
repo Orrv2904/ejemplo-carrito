@@ -1,30 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const productsDatabase = [
-        {
-            id: 1,
-            name: 'Regular pizza',
-            price: 400,
-            image: 'https://www.lavanguardia.com/files/og_thumbnail/files/fp/uploads/2021/03/30/6063031b90a87.r_d.1083-871-0.jpeg',
-        },
-        {
-            id: 2,
-            name: 'Sicilian pizza',
-            price: 500,
-            image: 'https://media.gettyimages.com/id/938742222/es/foto/pizza-de-pepperoni-cheesy.jpg?s=612x612&w=gi&k=20&c=PV3H9VSGmPqj2aevNly3yHT50b0gfzLbL6IJDs6WT2c=',
-        },
-        {
-            id: 3,
-            name: 'Sub Cheeseburger',
-            price: 300,
-            image: 'https://burrataandbubbles.com/wp-content/uploads/2020/02/cheeseburger-sub-featured-image.jpg',
-        },
-        {
-            id: 4,
-            name: 'Greek Salad',
-            price: 250,
-            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmBU3ESWllEpTAVgTcM37QlCurLPQsjv05Zg&usqp=CAU',
-        },
-    ];
+    const productsDatabase = [];
+    {% for product in pizza_data %}
+        const product = {
+            id: {{ product.id }},
+            name: '{{ product.name }}',
+            price: {{ product.price }},
+            image: '{{ product.image }}',
+        };
+        productsDatabase.push(product);
+    {% endfor %}
 
     let cart = [];
     const currency = 'C$';
@@ -143,4 +127,3 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 });
-
