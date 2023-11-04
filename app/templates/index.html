@@ -34,16 +34,19 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const productsDatabase = [];
-            {% for product in pizza_data %}
-                const product = {
+            const productsDatabase = [
+                {% for product in pizza_data %}
+                    {
                     id: {{ product.id }},
-                    name: '{{ product.name }}',
+                    name: '{{ product.name|escapejs }}',
                     price: {{ product.price }},
-                    image: '{{ product.image }}',
-                };
-                productsDatabase.push(product);
-            {% endfor %}
+                    image: '{{ product.image|escapejs }}',
+                    },
+                
+                {% endfor %}
+                ];
+
+                console.log(productsDatabase);
         
             let cart = [];
             const currency = 'C$';

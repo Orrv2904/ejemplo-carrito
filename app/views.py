@@ -16,4 +16,5 @@ def index(request):
     context = {
         'pizza_data': pizza_data,
     }
+    print(pizza_data)
     return render(request, "index.html", context)
